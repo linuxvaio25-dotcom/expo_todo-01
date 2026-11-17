@@ -26,6 +26,10 @@ import {
   todayParts,
   validateSchedule,
 } from '../dates';
+import PillButton from '../components/PillButton';
+import IconButton from '../components/IconButton';
+import PickerFooter from '../components/PickerFooter';
+import Calendar from '../components/Calendar';
 
 // Native-driven animations aren't available on web, so fall back quietly there.
 const USE_NATIVE_DRIVER = Platform.OS !== 'web';
@@ -87,37 +91,6 @@ function Typewriter({ text, onDone }) {
 }
 
 /* ---------- Small buttons ---------- */
-function PillButton({ label, color, onPress }) {
-  return (
-    <Pressable
-      onPress={onPress}
-      style={({ pressed }) => [
-        styles.pill,
-        { borderColor: color },
-        pressed && { backgroundColor: color + '33' },
-      ]}
-    >
-      <Text style={[styles.pillText, { color }]}>{label}</Text>
-    </Pressable>
-  );
-}
-
-function IconButton({ glyph, color, onPress, label }) {
-  return (
-    <Pressable
-      onPress={onPress}
-      accessibilityLabel={label}
-      style={({ pressed }) => [
-        styles.iconBtn,
-        { borderColor: color },
-        pressed && { backgroundColor: color + '33' },
-      ]}
-    >
-      <Text style={[styles.iconBtnText, { color }]}>{glyph}</Text>
-    </Pressable>
-  );
-}
-
 /* ---------- New-task composer ----------
    Field fades + zooms in with a green border; the Add button slides in
    below it. On submit, everything plays in reverse, then calls onSubmit. */
@@ -181,88 +154,6 @@ function Composer({ onSubmit }) {
 }
 
 /* ---------- Calendar & time pickers ---------- */
-const MONTH_NAMES = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
-];
-const WEEKDAYS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-
-function PickerFooter({ onClear, onClose, closeLabel }) {
-  return (
-    <View style={styles.pickerFooter}>
-      <PillButton label="Clear" color={C.muted} onPress={onClear} />
-      <PillButton label={closeLabel} color={C.blue} onPress={onClose} />
-    </View>
-  );
-}
-
-function Calendar({ initial, selected, onSelect, onClear, onClose }) {
-  const [view, setView] = useState({ y: initial.y, mo: initial.mo });
-  const today = todayParts();
-
-  const shift = (delta) =>
-    setView((v) => {
-      const idx = v.y * 12 + (v.mo - 1) + delta;
-      return { y: Math.floor(idx / 12), mo: (idx % 12) + 1 };
-    });
-
-  const firstWeekday = new Date(view.y, view.mo - 1, 1).getDay();
-  const daysInMonth = new Date(view.y, view.mo, 0).getDate();
-  const cells = [];
-  for (let i = 0; i < firstWeekday; i++) cells.push(null);
-  for (let d = 1; d <= daysInMonth; d++) cells.push(d);
-
-  const is = (p, d) => !!p && p.y === view.y && p.mo === view.mo && p.d === d;
-
-  return (
-    <View>
-      <View style={styles.calHeader}>
-        <Pressable onPress={() => shift(-1)} style={styles.calNav} accessibilityLabel="Previous month">
-          <Text style={styles.calNavText}>‹</Text>
-        </Pressable>
-        <Text style={styles.calTitle}>
-          {MONTH_NAMES[view.mo - 1]} {view.y}
-        </Text>
-        <Pressable onPress={() => shift(1)} style={styles.calNav} accessibilityLabel="Next month">
-          <Text style={styles.calNavText}>›</Text>
-        </Pressable>
-      </View>
-
-      <View style={styles.calGrid}>
-        {WEEKDAYS.map((w, i) => (
-          <View key={`w${i}`} style={styles.calCell}>
-            <Text style={styles.calWeekday}>{w}</Text>
-          </View>
-        ))}
-        {cells.map((d, i) =>
-          d === null ? (
-            <View key={`e${i}`} style={styles.calCell} />
-          ) : (
-            <Pressable
-              key={d}
-              style={styles.calCell}
-              onPress={() => onSelect({ y: view.y, mo: view.mo, d })}
-              accessibilityLabel={`${MONTH_NAMES[view.mo - 1]} ${d}, ${view.y}`}
-            >
-              <View
-                style={[
-                  styles.calDay,
-                  is(today, d) && !is(selected, d) && styles.calDayToday,
-                  is(selected, d) && styles.calDaySelected,
-                ]}
-              >
-                <Text style={[styles.calDayText, is(selected, d) && styles.calDayTextOn]}>{d}</Text>
-              </View>
-            </Pressable>
-          )
-        )}
-      </View>
-
-      <PickerFooter onClear={onClear} onClose={onClose} closeLabel="Close" />
-    </View>
-  );
-}
-
 function Stepper({ value, onUp, onDown, label }) {
   return (
     <View style={styles.stepper}>
