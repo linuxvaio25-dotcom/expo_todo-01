@@ -44,17 +44,26 @@ export const styles = StyleSheet.create({
   scheduleRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginVertical: 4 },
   scheduleLabel: { width: 62, color: C.muted, fontSize: 14 },
   scheduleValue: { flex: 1, color: C.text, fontSize: 14 },
-  // smallInput: {
-  //   backgroundColor: C.bg,
-  //   borderWidth: 1,
-  //   borderColor: C.line,
-  //   borderRadius: 8,
-  //   paddingHorizontal: 10,
-  //   paddingVertical: 8,
-  //   color: C.text,
-  //   fontSize: 14,
-  // },
-  error: { color: C.red, fontSize: 13, marginTop: 8 },
+  pickerField: {
+    backgroundColor: C.bg,
+    borderWidth: 1,
+    borderColor: C.line,
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    minHeight: 40,
+    justifyContent: 'center',
+  },
+  pickerFieldText: { color: C.text, fontSize: 14 },
+  pickerPanel: {
+    marginTop: 8,
+    backgroundColor: C.surface,
+    borderWidth: 1.5,
+    borderColor: C.blue,
+    borderRadius: 12,
+    padding: 12,
+  },
+  pickerFooter: { flexDirection: 'row', justifyContent: 'flex-end', gap: 10, marginTop: 10 },
 
   calHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 },
   calNav: { width: 40, height: 36, alignItems: 'center', justifyContent: 'center' },
@@ -64,9 +73,10 @@ export const styles = StyleSheet.create({
   calCell: { width: '14.2857%', height: 38, alignItems: 'center', justifyContent: 'center' },
   calWeekday: { color: C.muted, fontSize: 12 },
   calDay: { width: 32, height: 32, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
+  calDaySelected: { backgroundColor: C.blue },
+  calDayToday: { borderWidth: 1.5, borderColor: C.blue },
   calDayText: { color: C.text, fontSize: 14 },
-
-  pickerFooter: { flexDirection: 'row', justifyContent: 'flex-end', gap: 10, marginTop: 10 },
+  calDayTextOn: { color: C.bg, fontWeight: '700' },
 
   timeRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 14, marginVertical: 4 },
   stepper: { alignItems: 'center' },
@@ -79,6 +89,11 @@ export const styles = StyleSheet.create({
   segOn: { backgroundColor: C.blue },
   segText: { color: C.blue, fontWeight: '600', fontSize: 14 },
   segTextOn: { color: C.bg },
+
+  error: { color: C.red, fontSize: 13, marginTop: 8 },
+
+  sortRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 20 },
+  sortLabel: { color: C.muted, fontSize: 14 },
 
   list: { marginTop: 32 },
   row: { flexDirection: 'row', marginBottom: 24 },
@@ -112,28 +127,4 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   iconBtnText: { fontSize: 20, fontWeight: '700' },
-
-    pickerField: {
-    backgroundColor: C.bg,
-    borderWidth: 1,
-    borderColor: C.line,
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-    minHeight: 40,
-    justifyContent: 'center',
-  },
-  pickerFieldText: { color: C.text, fontSize: 14 },
-  pickerPanel: {
-    marginTop: 8,
-    backgroundColor: C.surface,
-    borderWidth: 1.5,
-    borderColor: C.blue,
-    borderRadius: 12,
-    padding: 12,
-  },
-  calDaySelected: { backgroundColor: C.blue },
-  calDayToday: { borderWidth: 1.5, borderColor: C.blue },
-  calDayTextOn: { color: C.bg, fontWeight: '700' },
-
 });

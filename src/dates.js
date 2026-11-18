@@ -36,7 +36,7 @@ export function parseTime(s) {
 
 export const formatTime = (h, min) => `${h % 12 || 12}:${pad(min)} ${h >= 12 ? 'PM' : 'AM'}`;
 export const formatPart = (p) => `${MONTHS[p.mo - 1]} ${p.d}, ${p.y} at ${formatTime(p.h, p.min)}`;
-const toMs = (p) => new Date(p.y, p.mo - 1, p.d, p.h, p.min).getTime();
+export const toMs = (p) => new Date(p.y, p.mo - 1, p.d, p.h, p.min).getTime();
 
 function parsePart(label, date, time) {
   if (!date && !time) return { part: null };
@@ -77,4 +77,18 @@ export function scheduleToDraft(schedule) {
 export function todayParts() {
   const now = new Date();
   return { y: now.getFullYear(), mo: now.getMonth() + 1, d: now.getDate() };
+}
+
+// Soonest start date first (falls back to the end date). Tasks with no dates go last.
+export function sortByDate(tasks) {
+  const key = (t) => {
+    const p = t.schedule && (t.schedule.start || t.schedule.end);
+    return p ? toMs(p) : Infinity;
+  };
+  return [...tasks].sort((a, b) => {
+    const ka = key(a);
+    const kb = key(b);
+    if (ka === kb) return a.id - b.id;
+    return ka < kb ? -1 : 1;
+  });
 }
