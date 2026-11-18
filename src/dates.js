@@ -92,3 +92,20 @@ export function sortByDate(tasks) {
     return ka < kb ? -1 : 1;
   });
 }
+
+const SOON_MS = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+
+// Returns 'overdue', 'soon' or null.
+export function dueStatus(task, now = Date.now()) {
+  const s = task.schedule;
+  if (task.completed || !s) return null;
+
+  const due = s.end || s.start;
+  if (!due) return null;
+  if (toMs(due) < now) return 'overdue';
+
+  const soon = [s.start, s.end].some(
+    (p) => p && toMs(p) >= now && toMs(p) <= now + SOON_MS
+  );
+  return soon ? 'soon' : null;
+}

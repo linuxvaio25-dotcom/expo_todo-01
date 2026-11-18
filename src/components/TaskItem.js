@@ -3,13 +3,13 @@ import { Animated, Easing, Text, TextInput, View } from 'react-native';
 import { C } from '../theme';
 import { styles } from '../styles';
 import { USE_NATIVE_DRIVER } from '../config';
-import { EMPTY_DRAFT, formatPart, scheduleToDraft, validateSchedule } from '../dates';
+import { EMPTY_DRAFT, formatPart, scheduleToDraft, validateSchedule, dueStatus } from '../dates';
 import SlideDown from './SlideDown';
 import ScheduleFields from './ScheduleFields';
 import PillButton from './PillButton';
 import IconButton from './IconButton';
 
-export default function TaskItem({ number, task, onUpdate, onRemove }) {
+export default function TaskItem({ number, task, onUpdate, onRemove, fadeOut, now }) {
   const [draft, setDraft] = useState(task.text);
   const [sched, setSched] = useState(EMPTY_DRAFT);
   const [error, setError] = useState('');
@@ -33,9 +33,15 @@ export default function TaskItem({ number, task, onUpdate, onRemove }) {
     }).start(onRemove);
   };
 
+  useEffect(() => {
+    if (fadeOut) removeWithFade();
+  }, [fadeOut]);
+
   const { mode, completed, schedule } = task;
   const showForm = mode === 'scheduling' || (mode === 'editing' && !!schedule);
   const showView = !!schedule && !showForm;
+  const status = dueStatus(task, now);
+  const statusColor = status === 'overdue' ? C.red : C.orange;
 
   let borderColor = C.line;
   if (completed) borderColor = C.gray;
@@ -140,7 +146,15 @@ export default function TaskItem({ number, task, onUpdate, onRemove }) {
 
         {showView && (
           <SlideDown key="sched-view" style={styles.scheduleWrap}>
-            <View style={[styles.field, styles.scheduleBox, { borderColor: completed ? C.gray : C.line }]}>
+            {/* <View style={[styles.field, styles.scheduleBox, { borderColor: completed ? C.gray : C.line }]}> */}
+            <View style={[styles.field, styles.scheduleBox, { borderColor: completed ? C.gray : status ? statusColor : C.line }]}>
+
+              {status && (
+                <Text style={[styles.badge, { color: statusColor }]}>
+                  {status === 'overdue' ? 'OVERDUE' : 'DUE SOON'}
+                </Text>
+              )}
+
               {schedule.start && (
                 <View style={styles.scheduleRow}>
                   <Text style={styles.scheduleLabel}>Start on</Text>

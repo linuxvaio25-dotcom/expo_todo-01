@@ -93,7 +93,19 @@ export const styles = StyleSheet.create({
   error: { color: C.red, fontSize: 13, marginTop: 8 },
 
   sortRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 20 },
+  searchInput: {
+    backgroundColor: C.surface,
+    borderWidth: 1.5,
+    borderColor: C.line,
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    fontSize: 15,
+    color: C.text,
+    marginBottom: 12,
+  },
   sortLabel: { color: C.muted, fontSize: 14 },
+  clearWrap: { alignItems: 'flex-start' },
 
   list: { marginTop: 32 },
   row: { flexDirection: 'row', marginBottom: 24 },
@@ -126,5 +138,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+
+  badge: { fontSize: 12, fontWeight: '700', letterSpacing: 1, marginBottom: 2 },
   iconBtnText: { fontSize: 20, fontWeight: '700' },
 });

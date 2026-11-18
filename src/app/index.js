@@ -8,7 +8,9 @@ import Typewriter from '../components/Typewriter';
 import Composer from '../components/Composer';
 import TaskItem from '../components/TaskItem';
 import SortBar from '../components/SortBar';
+import ClearCompleted from '../components/ClearCompleted';
 import { loadState, saveState } from '../storage';
+import FilterBar from '../components/FilterBar';
 
 const HEADLINE = 'What task would you like to add today?';
 
@@ -19,6 +21,10 @@ export default function App() {
   const [sortBy, setSortBy] = useState('added'); // 'added' | 'date'
   const [loaded, setLoaded] = useState(false);
   const nextId = useRef(1);
+  const [clearing, setClearing] = useState(false);
+  const [filter, setFilter] = useState('all'); // 'all' | 'active' | 'done'
+  const [query, setQuery] = useState('');
+  const [now, setNow] = useState(Date.now());
 
   // Load saved tasks once, when the app opens.
   useEffect(() => {
@@ -43,6 +49,11 @@ export default function App() {
     if (loaded) saveState({ tasks, sortBy });
   }, [tasks, sortBy, loaded]);
 
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 60000);
+    return () => clearInterval(id);
+  }, []);
+
   const addTask = (text) => {
     setComposing(false);
     if (!text) return;
@@ -52,12 +63,28 @@ export default function App() {
     ]);
   };
 
+  useEffect(() => {
+    if (completedCount === 0) setClearing(false);
+  }, [completedCount]);
+
   const updateTask = (id, patch) =>
     setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, ...patch } : t)));
 
   const removeTask = (id) => setTasks((prev) => prev.filter((t) => t.id !== id));
 
-  const visibleTasks = sortBy === 'date' ? sortByDate(tasks) : tasks;
+  const completedCount = tasks.filter((t) => t.completed).length;
+  const clearCompleted = () => setTasks((prev) => prev.filter((t) => !t.completed));
+
+  // const visibleTasks = sortBy === 'date' ? sortByDate(tasks) : tasks;
+
+  const sorted = sortBy === 'date' ? sortByDate(tasks) : tasks;
+  const q = query.trim().toLowerCase();
+  const visibleTasks = sorted.filter((t) => {
+    const matchesFilter =
+      filter === 'all' || (filter === 'active' ? !t.completed : t.completed);
+    const matchesQuery = !q || t.text.toLowerCase().includes(q);
+    return matchesFilter && matchesQuery;
+  });
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -89,6 +116,14 @@ export default function App() {
 
           <View style={styles.list}>
             {tasks.length > 1 && <SortBar value={sortBy} onChange={setSortBy} />}
+            {tasks.length > 0 && (
+              <FilterBar
+                query={query}
+                onQueryChange={setQuery}
+                filter={filter}
+                onFilterChange={setFilter}
+              />
+            )}
             {visibleTasks.map((task, i) => (
               <TaskItem
                 key={task.id}
@@ -96,8 +131,19 @@ export default function App() {
                 task={task}
                 onUpdate={(patch) => updateTask(task.id, patch)}
                 onRemove={() => removeTask(task.id)}
+                fadeOut={clearing && task.completed}
+                now={now}
               />
             ))}
+
+            {tasks.length > 0 && visibleTasks.length === 0 && (
+              <Text style={styles.prompt}>No tasks match your filter.</Text>
+            )}
+
+            {/* {completedCount > 0 && ( */}
+            {completedCount > 0 && !clearing && (
+              <ClearCompleted count={completedCount} onConfirm={clearCompleted} />
+            )}
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

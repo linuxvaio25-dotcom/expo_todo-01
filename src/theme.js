@@ -9,4 +9,5 @@ export const C = {
   red: '#ff5252',
   blue: '#5ab0ff',
   gray: '#5b616d',
+  orange: '#ff9f43',
 };
