@@ -109,3 +109,19 @@ export function dueStatus(task, now = Date.now()) {
   );
   return soon ? 'soon' : null;
 }
+
+export function buildReminders(tasks, now = Date.now()) {
+  const list = [];
+  tasks.forEach((t) => {
+    if (t.completed || !t.schedule) return;
+    const { start, end } = t.schedule;
+    if (start && toMs(start) > now) {
+      list.push({ key: `${t.id}-start`, title: 'Starting now', body: t.text, at: toMs(start) });
+    }
+    if (end && toMs(end) > now) {
+      list.push({ key: `${t.id}-end`, title: 'Due now', body: t.text, at: toMs(end) });
+    }
+  });
+  // iOS only keeps 64 pending notifications, so keep the soonest ones.
+  return list.sort((a, b) => a.at - b.at).slice(0, 60);
+}

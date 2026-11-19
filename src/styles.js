@@ -24,6 +24,15 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   plusText: { color: C.green, fontSize: 32, lineHeight: 36, fontWeight: '300' },
+  // plus: {
+  //   width: 56,
+  //   height: 56,
+  //   borderRadius: 28,
+  //   backgroundColor: C.green,
+  //   alignItems: 'center',
+  //   justifyContent: 'center',
+  // },
+  // plusText: { color: C.bg, fontSize: 34, lineHeight: 38, fontWeight: '400' },
 
   composer: { marginTop: 20 },
 
